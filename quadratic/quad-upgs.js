@@ -13,8 +13,8 @@ const QUAD_UPGRADES = {
     desc: "Autoclickers are stronger based on total Buildings bought.",
     chargedDesc: "Autoclickers are significantly stronger based on total Buildings bought.",
     cost: new Decimal(1),
-    eff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(4).add(1).pow(1.2)},
-    chargedEff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(4).add(1).pow(1e11)},
+    eff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(2).add(1).pow(1.5)},
+    chargedEff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(2).add(1).pow(1e15)},
     effectDisplay() {return format(tmp.quadHovers[2] || hasChargedQU(2) ? QUAD_UPGRADES[2].chargedEff() : QUAD_UPGRADES[2].eff()) + "x Autoclicker effectiveness"},
   },
   3: {
@@ -29,8 +29,8 @@ const QUAD_UPGRADES = {
     desc: "Point Factories are stronger based on total Buildings bought.",
     chargedDesc: "Point Factories are significantly stronger based on total Buildings bought.",
     cost: new Decimal(10),
-    eff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(4).add(1).pow(1.3)},
-    chargedEff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(4).add(1).pow(1.5e11)},
+    eff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(3).add(1).pow(1.75)},
+    chargedEff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(1.5).add(1).pow(3e14)},
     effectDisplay() {return format(tmp.quadHovers[4] || hasChargedQU(4) ? QUAD_UPGRADES[4].chargedEff() : QUAD_UPGRADES[4].eff()) + "x Point Factory effectiveness"},
   },
   5: {
@@ -52,8 +52,8 @@ const QUAD_UPGRADES = {
     desc: "Point Portals are stronger based on total Buildings bought.",
     chargedDesc: "Point Portals are significantly stronger based on total Buildings bought.",
     cost: new Decimal(25),
-    eff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(4).add(1).pow(1.4)},
-    chargedEff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(4).add(1).pow(2e11)},
+    eff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(3).add(1).pow(2)},
+    chargedEff() {return player.buyables[1].add(player.buyables[2]).add(player.buyables[3]).div(2).add(1).pow(5e13)},
     effectDisplay() {return format(tmp.quadHovers[7] || hasChargedQU(7) ? QUAD_UPGRADES[7].chargedEff() : QUAD_UPGRADES[7].eff()) + "x Point Portal effectiveness"},
   },
   8: {
@@ -99,14 +99,14 @@ const QUAD_UPGRADES = {
     eff() {
       let x = player.points.max(0).pow(hasZlabMilestone(2,1) ? (player.inSqrt ? 0.24 : 0.23) : 0.2).add(1)
       if(!hasSDU(9)) x = x.min("1e9e6")
-      if(hasSDU(9) && x.gt("1e9e6")) x = x.div("1e9e6").pow(0.75).mul("1e9e6")
-      if(x.gt("1e1e13")) x = x.div("1e1e13").pow(0.25).mul("1e1e13")
+      if(hasSDU(9) && x.gt("1e9e6")) x = x.div("1e9e6").pow(0.8).mul("1e9e6")
+      if(x.gt("1e1e13")) x = x.div("1e1e13").pow(0.6).mul("1e1e13")
       return x
     },
     chargedEff() {
       let x = player.points.max(0).pow(hasZlabMilestone(2,1) ? (player.inSqrt ? 0.24 : 0.23) : 0.2).add(1)
       if(!hasSDU(9)) x = x.min("1e9e6")
-      if(x.gt("1e1e13")) x = x.div("1e1e13").pow(0.4).mul("1e1e13")
+      if(x.gt("1e1e13")) x = x.div("1e1e13").pow(1.2).mul("1e1e13")
       return x
     },
     effectDisplay() {return format(tmp.quadHovers[13] || hasChargedQU(13) ? QUAD_UPGRADES[13].chargedEff() : QUAD_UPGRADES[13].eff()) + "x production"},
