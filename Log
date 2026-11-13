@@ -1,0 +1,130 @@
+const LogarithmicPrestige = {
+  req() {
+    return new Decimal("1e32000000");
+  },
+  canReset() {
+    return !player.inLostIntegration && player.integration.dx.gte(this.req());
+  },
+  logFormula() {
+    if (!this.canReset()) return new Decimal(0);
+    let gain = player.integration.dx.div(this.req()).log10().div(1e6).add(1).pow(1.5);
+    if (LogarithmicUpgrades.has(1)) gain = gain.mul(LogarithmicUpgrades[1].eff());
+    if (LogarithmicUpgrades.has(5)) gain = gain.mul(5);
+    return gain.floor();
+  },
+  reset(force = false) {
+    if (!force && !this.canReset()) return;
+    if (!force) {
+      if (!confirm("Resetting for Logarithmic (log) will reset all Integration and Sinusoidal progress! Are you sure?")) return;
+      let gain = this.logFormula();
+      player.logarithmic.points = player.logarithmic.points.add(gain);
+      player.logarithmic.total = player.logarithmic.total.add(gain);
+      player.logarithmic.resets = player.logarithmic.resets.add(1);
+    }
+
+    // Reset Sinusoidal & Hypercomplex
+    player.sinusoidals = new Decimal(LogarithmicUpgrades.has(3) ? 10 : 0);
+    player.triangles = new Decimal(0);
+    player.totalTriangles = new Decimal(0);
+    player.trigFunctions = {
+      waves: new Decimal(0),
+      buyables: [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)],
+      powers: [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)],
+    };
+    player.sinUpgrades = [null,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    player.unitCircle = { unlocked: false, quadrant: 0, purchases: [new Decimal(0), new Decimal(0)] };
+    player.pythTriples = {
+      unlocked: false, essence: new Decimal(0), def: [null, new Decimal(0), new Decimal(0), new Decimal(0)],
+      buyables: [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)],
+      barsUnlocked: [null, false, false, false], bars: [null, new Decimal(0), new Decimal(0), new Decimal(0)], barFilling: 0,
+    };
+    player.w = new Decimal(0);
+    player.wUnlocked = false;
+    player.j = new Decimal(0);
+    player.k = new Decimal(0);
+    player.obtainedAlterations = [];
+    player.hypercompUpgs = { dynamic: [], basic: [], purchases: [0, 0, 0] };
+    player.quaternions = [new Decimal(0), new Decimal(0)];
+    player.extraQuaternions = new Decimal(0);
+    player.hypercompFlune = {
+      currencies: [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)],
+      powers: [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)],
+    };
+
+    // Reset Integration
+    player.integration.dx = new Decimal(0);
+    player.integration.totaldx = new Decimal(0);
+    player.integration.holes = new Decimal(0);
+    player.integration.emptySets = new Decimal(0);
+    player.integration.rebuyableUpgrades = [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)];
+    if (!LogarithmicUpgrades.has(2)) {
+      player.integration.upgrades.prod = [];
+      player.integration.upgrades.qol = [];
+      player.integration.upgrades.unlocked = [];
+    }
+    player.integration.assignedSets = [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)];
+    player.integration.setSacrificeValues = [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)];
+    player.integration.limitScore = new Decimal(0);
+    player.integration.inTheLimit = false;
+    player.integration.chalCompletions = [null, [], 0, 0, 0, 0, [], 0, 0, [null, 120, 120, 120, 120, 120, 120]];
+    player.integration.derivatives = {
+      0: new Decimal(0), 1: new Decimal(0), 2: new Decimal(0), 3: new Decimal(0), highestReached: new Decimal(0),
+      functions: [null, new Decimal(0), new Decimal(0), new Decimal(0)],
+      buyables: [null, new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0), new Decimal(0)],
+    };
+    player.integrations = new Decimal(LogarithmicUpgrades.has(3) ? 40 : 0);
+
+    // Force lower resets
+    IntegrationPrestige.integrate(true);
+  }
+};
+
+const LogarithmicUpgrades = {
+  1: {
+    title: "Logarithmic Scaling",
+    desc: "Multiply log gain based on unspent log.",
+    cost: new Decimal(2),
+    eff() { return player.logarithmic.points.add(1).pow(0.5); },
+    effectDisplay() { return format(this.eff()) + "x log gain"; }
+  },
+  2: {
+    title: "Permanent Trees",
+    desc: "Keep all Integration Production and Perk Tree upgrades on Logarithmic reset.",
+    cost: new Decimal(5),
+    effectDisplay() { return null; }
+  },
+  3: {
+    title: "Logarithmic Headstart",
+    desc: "Start Logarithmic resets with 40 Integrations and 10 Sinusoidals.",
+    cost: new Decimal(12),
+    effectDisplay() { return null; }
+  },
+  4: {
+    title: "Uncapped dx",
+    desc: "Remove the 1e50,000,000 dx hardcap and boost dx gain by log^100,000.",
+    cost: new Decimal(25),
+    eff() { return player.logarithmic.points.add(1).pow(100000); },
+    effectDisplay() { return format(this.eff()) + "x dx gain"; }
+  },
+  5: {
+    title: "Logarithmic Quintupler",
+    desc: "Multiply log gain by 5x.",
+    cost: new Decimal(100),
+    effectDisplay() { return null; }
+  },
+  6: {
+    title: "Logarithmic Singularity",
+    desc: "Gain 10% of pending log every second passively.",
+    cost: new Decimal(500),
+    effectDisplay() { return null; }
+  },
+  has(x) {
+    return player.logarithmic.upgrades.includes(x);
+  },
+  buy(x) {
+    if (player.logarithmic.points.gte(this[x].cost) && !this.has(x)) {
+      player.logarithmic.points = player.logarithmic.points.sub(this[x].cost);
+      player.logarithmic.upgrades.push(x);
+    }
+  }
+};
